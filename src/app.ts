@@ -9,6 +9,7 @@ import {
   unRegisterWindow
 } from "./middlewares/forwardToRenderer";
 import "./stores/mainProcStore";
+import EditorManager from "./editorManager";
 
 console.log("isMainProcess", isMainProcess);
 const isDev = process.env.NODE_ENV === "development";
@@ -20,6 +21,7 @@ const { BrowserWindow } = electron;
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let editorManager;
 
 const createWindow = async () => {
   // Create the browser window.
@@ -34,6 +36,7 @@ const createWindow = async () => {
     console.log("mainWindow registered");
     registerWindow(mainWindow);
   });
+  editorManager = new EditorManager();
   // and load the index.html of the app.
   // eslint-disable-next-line no-console
   console.log(`Starting in dev mode? ${isDev}`);
@@ -78,38 +81,58 @@ const createWindow = async () => {
   });
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on("ready", () => {
-  /* appIcon = new Tray('/Users/alanhamlett/git/wakatime-desktop/src/img/wakatime-240.png');
-  const contextMenu = Menu.buildFromTemplate([
-    {label: 'Item1', type: 'radio'},
-    {label: 'Item2', type: 'radio'},
-    {label: 'Item3', type: 'radio', checked: true},
-    {label: 'Item4', type: 'radio'}
-  ]);
-  appIcon.setToolTip('This is my application.');
-  appIcon.setContextMenu(contextMenu); */
-  createWindow();
-});
+// The return value of this method indicates whether or not this instance of
+// your application successfully obtained the lock. If it failed to obtain the lock,
+// you can assume that another instance of your application is already
+// running with the lock and exit immediately.
+const gotTheLock = app.requestSingleInstanceLock();
 
-// Quit when all windows are closed.
-app.on("window-all-closed", () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
-});
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on("second-instance", (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
 
-app.on("activate", () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
+  // This method will be called when Electron has finished
+  // initialization and is ready to create browser windows.
+  // Some APIs can only be used after this event occurs.
+  app.on("ready", async () => {
+    /* appIcon = new Tray('/Users/alanhamlett/git/wakatime-desktop/src/img/wakatime-240.png');
+    const contextMenu = Menu.buildFromTemplate([
+      {label: 'Item1', type: 'radio'},
+      {label: 'Item2', type: 'radio'},
+      {label: 'Item3', type: 'radio', checked: true},
+      {label: 'Item4', type: 'radio'}
+    ]);
+    appIcon.setToolTip('This is my application.');
+    appIcon.setContextMenu(contextMenu); */
     createWindow();
-  }
-});
+
+    const i = await editorManager.installedEditors();
+  });
+
+  // Quit when all windows are closed.
+  app.on("window-all-closed", () => {
+    // On OS X it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== "darwin") {
+      app.quit();
+    }
+  });
+
+  app.on("activate", () => {
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (mainWindow === null) {
+      createWindow();
+    }
+  });
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

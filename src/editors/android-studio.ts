@@ -26,7 +26,7 @@ export default class AndroidStudio extends Editor {
   }
 
   public get binaries(): string[] {
-    return ["editor"];
+    return ["studio"];
   }
 
   public async isEditorInstalled(): Promise<boolean> {

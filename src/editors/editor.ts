@@ -11,8 +11,12 @@ export default abstract class Editor implements EditorInterface {
   }
 
   public async isDirectory(directory: string): Promise<boolean> {
-    const stats = await fs.stat(directory);
-    return stats.isDirectory();
+    try {
+      const stats = await fs.stat(directory);
+      return stats.isDirectory();
+    } catch (err) {
+      return false;
+    }
   }
 
   public isDirectorySync(directory: string): boolean {
