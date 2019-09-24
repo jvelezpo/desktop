@@ -112,14 +112,6 @@ if (!gotTheLock) {
     appIcon.setToolTip('This is my application.');
     appIcon.setContextMenu(contextMenu); */
     createWindow();
-    console.log('=============================');
-    console.log('OEL');
-    console.log('=============================');
-
-    // const installedEditors = await editorManager.installedEditors();
-    console.log('=============================');
-    // console.log(installedEditors);
-    console.log('=============================');
   });
 
   // Quit when all windows are closed.
