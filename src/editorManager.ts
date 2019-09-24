@@ -23,14 +23,14 @@ export default class EditorManager {
     };
   }
 
-  public async installedEditors(): Promise<string[]> {
-    // const result = [];
-    // for (const editor in this.editors) {
-    //   result.push(
-    //     `${editor} installed ${await this.editors[editor].isEditorInstalled()}`
-    //   );
-    // }
-    // return result;
-    return await Promise.all(Object.keys(this.editors).map(async (editor) => `${editor} installed ${await this.editors[editor].isEditorInstalled()}`));
-  }
+  // public async installedEditors(): Promise<string[]> {
+  //   return await Promise.all(
+  //     Object.keys(this.editors).map(
+  //       async editor =>
+  //         `${editor} installed ${await this.editors[
+  //           editor
+  //         ].isEditorInstalled()}`
+  //     )
+  //   );
+  // }
 }

@@ -101,7 +101,7 @@ if (!gotTheLock) {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  app.on("ready", async () => {
+  app.on("ready", () => {
     /* appIcon = new Tray('/Users/alanhamlett/git/wakatime-desktop/src/img/wakatime-240.png');
     const contextMenu = Menu.buildFromTemplate([
       {label: 'Item1', type: 'radio'},
@@ -112,8 +112,14 @@ if (!gotTheLock) {
     appIcon.setToolTip('This is my application.');
     appIcon.setContextMenu(contextMenu); */
     createWindow();
+    console.log('=============================');
+    console.log('OEL');
+    console.log('=============================');
 
-    const i = await editorManager.installedEditors();
+    // const installedEditors = await editorManager.installedEditors();
+    console.log('=============================');
+    // console.log(installedEditors);
+    console.log('=============================');
   });
 
   // Quit when all windows are closed.
